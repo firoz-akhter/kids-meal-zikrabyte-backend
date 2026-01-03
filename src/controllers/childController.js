@@ -1,7 +1,7 @@
 const { Child, Subscription } = require("../models");
 
 // @desc    Get all children for logged in parent
-// @route   GET /api/children
+// GET /api/children
 // @access  Private (Parent)
 exports.getChildren = async (req, res) => {
   try {
@@ -25,7 +25,7 @@ exports.getChildren = async (req, res) => {
 };
 
 // @desc    Get single child by ID
-// @route   GET /api/children/:id
+// GET /api/children/:id
 // @access  Private (Parent)
 exports.getChild = async (req, res) => {
   try {
@@ -66,7 +66,7 @@ exports.getChild = async (req, res) => {
 };
 
 // @desc    Add a new child
-// @route   POST /api/children
+// POST /api/children
 // @access  Private (Parent)
 exports.addChild = async (req, res) => {
   try {
@@ -118,7 +118,7 @@ exports.addChild = async (req, res) => {
 };
 
 // @desc    Update child details
-// @route   PUT /api/children/:id
+// PUT /api/children/:id
 // @access  Private (Parent)
 exports.updateChild = async (req, res) => {
   try {
@@ -171,7 +171,7 @@ exports.updateChild = async (req, res) => {
 };
 
 // @desc    Delete child (soft delete)
-// @route   DELETE /api/children/:id
+// DELETE /api/children/:id
 // @access  Private (Parent)
 exports.deleteChild = async (req, res) => {
   try {
@@ -219,7 +219,7 @@ exports.deleteChild = async (req, res) => {
 };
 
 // @desc    Get child's QR code
-// @route   GET /api/children/:id/qr-code
+// GET /api/children/:id/qr-code
 // @access  Private (Parent)
 exports.getQRCode = async (req, res) => {
   try {
@@ -253,7 +253,7 @@ exports.getQRCode = async (req, res) => {
 };
 
 // @desc    Verify QR code (for admin during delivery)
-// @route   POST /api/children/verify-qr
+// POST /api/children/verify-qr
 // @access  Private (Admin)
 exports.verifyQRCode = async (req, res) => {
   try {
@@ -311,7 +311,7 @@ exports.verifyQRCode = async (req, res) => {
 };
 
 // @desc    Get all children (Admin only)
-// @route   GET /api/children/admin/all
+// GET /api/children/admin/all
 // @access  Private (Admin)
 exports.getAllChildren = async (req, res) => {
   try {

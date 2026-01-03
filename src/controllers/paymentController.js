@@ -1,7 +1,7 @@
 const { Payment, Subscription } = require("../models");
 
 // @desc    Get payment history for parent
-// @route   GET /api/payments
+// GET /api/payments
 // @access  Private (Parent)
 exports.getPayments = async (req, res) => {
   try {
@@ -42,7 +42,7 @@ exports.getPayments = async (req, res) => {
 };
 
 // @desc    Get single payment
-// @route   GET /api/payments/:id
+//  GET /api/payments/:id
 // @access  Private (Parent)
 exports.getPayment = async (req, res) => {
   try {
@@ -74,7 +74,7 @@ exports.getPayment = async (req, res) => {
 };
 
 // @desc    Get payment summary for parent
-// @route   GET /api/payments/summary
+// GET /api/payments/summary
 // @access  Private (Parent)
 exports.getPaymentSummary = async (req, res) => {
   try {
@@ -110,7 +110,7 @@ exports.getPaymentSummary = async (req, res) => {
 };
 
 // @desc    Process payment (Simplified - in real app, integrate payment gateway)
-// @route   POST /api/payments/process
+// POST /api/payments/process
 // @access  Private (Parent)
 exports.processPayment = async (req, res) => {
   try {
@@ -197,7 +197,7 @@ exports.processPayment = async (req, res) => {
 };
 
 // @desc    Request refund (Note: No refund policy, but can track requests)
-// @route   POST /api/payments/:id/refund-request
+// POST /api/payments/:id/refund-request
 // @access  Private (Parent)
 exports.requestRefund = async (req, res) => {
   try {
@@ -249,7 +249,7 @@ exports.requestRefund = async (req, res) => {
 };
 
 // @desc    Get all payments (Admin)
-// @route   GET /api/payments/admin/all
+// GET /api/payments/admin/all
 // @access  Private (Admin)
 exports.getAllPayments = async (req, res) => {
   try {
@@ -321,7 +321,7 @@ exports.getAllPayments = async (req, res) => {
 };
 
 // @desc    Get payment statistics (Admin Dashboard)
-// @route   GET /api/payments/admin/stats
+// GET /api/payments/admin/stats
 // @access  Private (Admin)
 exports.getPaymentStats = async (req, res) => {
   try {
@@ -402,7 +402,7 @@ exports.getPaymentStats = async (req, res) => {
 };
 
 // @desc    Get revenue report (Admin)
-// @route   GET /api/payments/admin/revenue
+// GET /api/payments/admin/revenue
 // @access  Private (Admin)
 exports.getRevenueReport = async (req, res) => {
   try {

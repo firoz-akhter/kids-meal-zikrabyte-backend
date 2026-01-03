@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const { User } = require("../models");
 
 // Protect routes - verify JWT token
-exports.protect = async (req, res, next) => {
+const auth = async (req, res, next) => {
   try {
     let token;
 
@@ -27,29 +27,48 @@ exports.protect = async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
       // Get user from token
-      req.user = await User.findById(decoded.id);
+      const user = await User.findById(decoded.id);
 
-      if (!req.user) {
+      if (!user) {
         return res.status(401).json({
           success: false,
-          message: "User not found. Please login again.",
+          message: "User not found. Token is invalid.",
         });
       }
 
       // Check if user is active
-      if (!req.user.isActive) {
+      if (!user.isActive) {
         return res.status(403).json({
           success: false,
           message: "Your account has been deactivated. Please contact support.",
         });
       }
 
+      // Attach user to request object
+      req.user = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      };
+
       next();
     } catch (error) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid or expired token. Please login again.",
-      });
+      if (error.name === "TokenExpiredError") {
+        return res.status(401).json({
+          success: false,
+          message: "Token has expired. Please login again.",
+        });
+      }
+
+      if (error.name === "JsonWebTokenError") {
+        return res.status(401).json({
+          success: false,
+          message: "Invalid token. Please login again.",
+        });
+      }
+
+      throw error;
     }
   } catch (error) {
     console.error("Auth middleware error:", error);
@@ -60,30 +79,4 @@ exports.protect = async (req, res, next) => {
   }
 };
 
-// Optional authentication - doesn't fail if no token
-exports.optionalAuth = async (req, res, next) => {
-  try {
-    let token;
-
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    ) {
-      token = req.headers.authorization.split(" ")[1];
-    }
-
-    if (token) {
-      try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = await User.findById(decoded.id);
-      } catch (error) {
-        // Token invalid but continue anyway
-        req.user = null;
-      }
-    }
-
-    next();
-  } catch (error) {
-    next();
-  }
-};
+module.exports = auth;

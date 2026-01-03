@@ -1,4 +1,3 @@
-// controllers/index.js
 // Central export file for all controllers
 
 const authController = require("./authController");
