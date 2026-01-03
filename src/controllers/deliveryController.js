@@ -1,4 +1,4 @@
-const { Delivery, Subscription, Child } = require("../models");
+const { Delivery, Subscription, Child_profile } = require("../models");
 
 // @desc    Get today's meal status for parent
 // @route   GET /api/deliveries/today

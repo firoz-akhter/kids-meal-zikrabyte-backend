@@ -1,4 +1,4 @@
-const { Subscription, Child, Payment, Delivery } = require("../models");
+const { Subscription, Payment, Delivery, Child_profile } = require("../models");
 
 // Pricing configuration
 const PRICING = {
