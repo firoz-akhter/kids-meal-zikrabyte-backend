@@ -15,7 +15,7 @@ const PRICING = {
 };
 
 // @desc    Get all subscriptions for logged in parent
-// @route   GET /api/subscriptions
+// GET /api/subscriptions
 // @access  Private (Parent)
 exports.getSubscriptions = async (req, res) => {
   try {
@@ -50,7 +50,7 @@ exports.getSubscriptions = async (req, res) => {
 };
 
 // @desc    Get single subscription
-// @route   GET /api/subscriptions/:id
+// GET /api/subscriptions/:id
 // @access  Private (Parent)
 exports.getSubscription = async (req, res) => {
   try {
@@ -108,7 +108,7 @@ exports.getSubscription = async (req, res) => {
 };
 
 // @desc    Calculate subscription price
-// @route   POST /api/subscriptions/calculate-price
+// POST /api/subscriptions/calculate-price
 // @access  Private (Parent)
 exports.calculatePrice = async (req, res) => {
   try {
@@ -157,7 +157,7 @@ exports.calculatePrice = async (req, res) => {
 };
 
 // @desc    Create new subscription
-// @route   POST /api/subscriptions
+// POST /api/subscriptions
 // @access  Private (Parent)
 exports.createSubscription = async (req, res) => {
   try {
@@ -276,7 +276,7 @@ exports.createSubscription = async (req, res) => {
 };
 
 // @desc    Pause subscription
-// @route   PUT /api/subscriptions/:id/pause
+// PUT /api/subscriptions/:id/pause
 // @access  Private (Parent)
 exports.pauseSubscription = async (req, res) => {
   try {
@@ -318,7 +318,7 @@ exports.pauseSubscription = async (req, res) => {
 };
 
 // @desc    Resume subscription
-// @route   PUT /api/subscriptions/:id/resume
+// PUT /api/subscriptions/:id/resume
 // @access  Private (Parent)
 exports.resumeSubscription = async (req, res) => {
   try {
@@ -358,7 +358,7 @@ exports.resumeSubscription = async (req, res) => {
 };
 
 // @desc    Cancel subscription
-// @route   PUT /api/subscriptions/:id/cancel
+// PUT /api/subscriptions/:id/cancel
 // @access  Private (Parent)
 exports.cancelSubscription = async (req, res) => {
   try {
@@ -404,7 +404,7 @@ exports.cancelSubscription = async (req, res) => {
 };
 
 // @desc    Get subscription history for child
-// @route   GET /api/subscriptions/child/:childId/history
+// GET /api/subscriptions/child/:childId/history
 // @access  Private (Parent)
 exports.getChildSubscriptionHistory = async (req, res) => {
   try {
@@ -446,7 +446,7 @@ exports.getChildSubscriptionHistory = async (req, res) => {
 };
 
 // @desc    Get all subscriptions (Admin)
-// @route   GET /api/subscriptions/admin/all
+// GET /api/subscriptions/admin/all
 // @access  Private (Admin)
 exports.getAllSubscriptions = async (req, res) => {
   try {
@@ -496,7 +496,7 @@ exports.getAllSubscriptions = async (req, res) => {
 };
 
 // @desc    Admin pause/resume subscription
-// @route   PUT /api/subscriptions/admin/:id/status
+// PUT /api/subscriptions/admin/:id/status
 // @access  Private (Admin)
 exports.adminUpdateSubscriptionStatus = async (req, res) => {
   try {

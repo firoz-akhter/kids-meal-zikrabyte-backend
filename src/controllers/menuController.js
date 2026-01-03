@@ -27,7 +27,7 @@ const getWeekInfo = (date) => {
 };
 
 // @desc    Get current week menu (Parent view)
-// @route   GET /api/menus/current
+// GET /api/menus/current
 // @access  Private (Parent)
 exports.getCurrentMenu = async (req, res) => {
   try {
@@ -54,7 +54,7 @@ exports.getCurrentMenu = async (req, res) => {
 };
 
 // @desc    Get menu for specific date
-// @route   GET /api/menus/date/:date
+// GET /api/menus/date/:date
 // @access  Private
 exports.getMenuForDate = async (req, res) => {
   try {
@@ -93,7 +93,7 @@ exports.getMenuForDate = async (req, res) => {
 };
 
 // @desc    Get all menus (Admin)
-// @route   GET /api/menus/admin/all
+// GET /api/menus/admin/all
 // @access  Private (Admin)
 exports.getAllMenus = async (req, res) => {
   try {
@@ -133,7 +133,7 @@ exports.getAllMenus = async (req, res) => {
 };
 
 // @desc    Get single menu by ID
-// @route   GET /api/menus/:id
+// GET /api/menus/:id
 // @access  Private (Admin)
 exports.getMenu = async (req, res) => {
   try {
@@ -163,7 +163,7 @@ exports.getMenu = async (req, res) => {
 };
 
 // @desc    Create new menu
-// @route   POST /api/menus
+// POST /api/menus
 // @access  Private (Admin)
 exports.createMenu = async (req, res) => {
   try {
@@ -226,7 +226,7 @@ exports.createMenu = async (req, res) => {
 };
 
 // @desc    Update menu
-// @route   PUT /api/menus/:id
+// PUT /api/menus/:id
 // @access  Private (Admin)
 exports.updateMenu = async (req, res) => {
   try {
@@ -262,7 +262,7 @@ exports.updateMenu = async (req, res) => {
 };
 
 // @desc    Publish menu
-// @route   PUT /api/menus/:id/publish
+// PUT /api/menus/:id/publish
 // @access  Private (Admin)
 exports.publishMenu = async (req, res) => {
   try {
@@ -299,7 +299,7 @@ exports.publishMenu = async (req, res) => {
 };
 
 // @desc    Unpublish menu
-// @route   PUT /api/menus/:id/unpublish
+// PUT /api/menus/:id/unpublish
 // @access  Private (Admin)
 exports.unpublishMenu = async (req, res) => {
   try {
@@ -336,7 +336,7 @@ exports.unpublishMenu = async (req, res) => {
 };
 
 // @desc    Delete menu
-// @route   DELETE /api/menus/:id
+// DELETE /api/menus/:id
 // @access  Private (Admin)
 exports.deleteMenu = async (req, res) => {
   try {
@@ -372,7 +372,7 @@ exports.deleteMenu = async (req, res) => {
 };
 
 // @desc    Get upcoming weeks (for creating menus)
-// @route   GET /api/menus/admin/upcoming-weeks
+// GET /api/menus/admin/upcoming-weeks
 // @access  Private (Admin)
 exports.getUpcomingWeeks = async (req, res) => {
   try {

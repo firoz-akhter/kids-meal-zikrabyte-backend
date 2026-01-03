@@ -1,17 +1,19 @@
-// Restrict access to specific roles
-exports.authorize = (...roles) => {
+// Check if user has required role
+const roleCheck = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "Not authorized to access this route",
+        message: "Not authorized. Please login first.",
       });
     }
 
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
-        message: `User role '${req.user.role}' is not authorized to access this route`,
+        message: `Access denied. This route requires ${roles.join(
+          " or "
+        )} role.`,
       });
     }
 
@@ -19,35 +21,14 @@ exports.authorize = (...roles) => {
   };
 };
 
-// Check if user is parent
-exports.isParent = (req, res, next) => {
-  if (!req.user || req.user.role !== "parent") {
-    return res.status(403).json({
-      success: false,
-      message: "Access denied. Parents only.",
-    });
-  }
-  next();
-};
+// Shorthand middleware for common roles
+const isParent = roleCheck("parent");
+const isAdmin = roleCheck("admin");
+const isParentOrAdmin = roleCheck("parent", "admin");
 
-// Check if user is admin
-exports.isAdmin = (req, res, next) => {
-  if (!req.user || req.user.role !== "admin") {
-    return res.status(403).json({
-      success: false,
-      message: "Access denied. Admins only.",
-    });
-  }
-  next();
-};
-
-// Check if user is either parent or admin
-exports.isParentOrAdmin = (req, res, next) => {
-  if (!req.user || !["parent", "admin"].includes(req.user.role)) {
-    return res.status(403).json({
-      success: false,
-      message: "Access denied.",
-    });
-  }
-  next();
+module.exports = {
+  roleCheck,
+  isParent,
+  isAdmin,
+  isParentOrAdmin,
 };

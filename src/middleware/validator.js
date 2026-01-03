@@ -1,193 +1,337 @@
-// Validation middleware for common requests
+const { body, param, query, validationResult } = require("express-validator");
 
-// Validate registration data
-exports.validateRegister = (req, res, next) => {
-  const { name, email, mobile, password } = req.body;
-
-  const errors = [];
-
-  if (!name || name.trim().length < 2) {
-    errors.push("Name must be at least 2 characters long");
-  }
-
-  if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-    errors.push("Please provide a valid email address");
-  }
-
-  if (!mobile || !/^[0-9]{10}$/.test(mobile)) {
-    errors.push("Please provide a valid 10-digit mobile number");
-  }
-
-  if (!password || password.length < 6) {
-    errors.push("Password must be at least 6 characters long");
-  }
-
-  if (errors.length > 0) {
+// Middleware to check validation results
+const validate = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
     return res.status(400).json({
       success: false,
       message: "Validation failed",
-      errors,
+      errors: errors.array().map((err) => ({
+        field: err.path,
+        message: err.msg,
+      })),
     });
   }
-
   next();
 };
 
-// Validate login data
-exports.validateLogin = (req, res, next) => {
-  const { email, password } = req.body;
+// Auth Validators
+const registerValidator = [
+  body("name")
+    .trim()
+    .notEmpty()
+    .withMessage("Name is required")
+    .isLength({ min: 2, max: 50 })
+    .withMessage("Name must be between 2 and 50 characters"),
 
-  if (!email || !password) {
-    return res.status(400).json({
-      success: false,
-      message: "Please provide email and password",
-    });
-  }
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Please provide a valid email")
+    .normalizeEmail(),
 
-  next();
-};
+  body("mobile")
+    .trim()
+    .notEmpty()
+    .withMessage("Mobile number is required")
+    .matches(/^[0-9]{10}$/)
+    .withMessage("Please provide a valid 10-digit mobile number"),
 
-// Validate child data
-exports.validateChild = (req, res, next) => {
-  const { name, age, grade, deliveryLocation } = req.body;
+  body("password")
+    .notEmpty()
+    .withMessage("Password is required")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters"),
 
-  const errors = [];
+  validate,
+];
 
-  if (!name || name.trim().length < 2) {
-    errors.push("Child name must be at least 2 characters long");
-  }
+const loginValidator = [
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Please provide a valid email"),
 
-  if (!age || age < 1 || age > 18) {
-    errors.push("Child age must be between 1 and 18");
-  }
+  body("password").notEmpty().withMessage("Password is required"),
 
-  if (!grade || grade.trim().length === 0) {
-    errors.push("Grade is required");
-  }
+  validate,
+];
 
-  if (!deliveryLocation || deliveryLocation.trim().length === 0) {
-    errors.push("Delivery location is required");
-  }
+const changePasswordValidator = [
+  body("currentPassword")
+    .notEmpty()
+    .withMessage("Current password is required"),
 
-  if (errors.length > 0) {
-    return res.status(400).json({
-      success: false,
-      message: "Validation failed",
-      errors,
-    });
-  }
+  body("newPassword")
+    .notEmpty()
+    .withMessage("New password is required")
+    .isLength({ min: 6 })
+    .withMessage("New password must be at least 6 characters"),
 
-  next();
-};
+  validate,
+];
 
-// Validate subscription data
-exports.validateSubscription = (req, res, next) => {
-  const { childId, planType, mealType, paymentMethod } = req.body;
+// Child Validators
+const addChildValidator = [
+  body("name")
+    .trim()
+    .notEmpty()
+    .withMessage("Child name is required")
+    .isLength({ min: 2, max: 50 })
+    .withMessage("Name must be between 2 and 50 characters"),
 
-  const errors = [];
+  body("age")
+    .notEmpty()
+    .withMessage("Age is required")
+    .isInt({ min: 3, max: 18 })
+    .withMessage("Age must be between 3 and 18"),
 
-  if (!childId) {
-    errors.push("Child ID is required");
-  }
+  body("grade").trim().notEmpty().withMessage("Grade is required"),
 
-  if (!planType || !["weekly", "monthly"].includes(planType)) {
-    errors.push("Plan type must be either 'weekly' or 'monthly'");
-  }
+  body("deliveryLocation")
+    .trim()
+    .notEmpty()
+    .withMessage("Delivery location is required"),
 
-  if (!mealType || !["lunch", "snacks"].includes(mealType)) {
-    errors.push("Meal type must be either 'lunch' or 'snacks'");
-  }
+  body("foodPreference")
+    .optional()
+    .isIn(["veg", "non-veg", "veg-only"])
+    .withMessage("Invalid food preference"),
 
-  if (
-    !paymentMethod ||
-    !["card", "upi", "netbanking", "wallet"].includes(paymentMethod)
-  ) {
-    errors.push("Payment method must be one of: card, upi, netbanking, wallet");
-  }
+  body("allergies")
+    .optional()
+    .isArray()
+    .withMessage("Allergies must be an array"),
 
-  if (errors.length > 0) {
-    return res.status(400).json({
-      success: false,
-      message: "Validation failed",
-      errors,
-    });
-  }
+  validate,
+];
 
-  next();
-};
+const updateChildValidator = [
+  body("name")
+    .optional()
+    .trim()
+    .isLength({ min: 2, max: 50 })
+    .withMessage("Name must be between 2 and 50 characters"),
 
-// Validate menu data
-exports.validateMenu = (req, res, next) => {
-  const { weekStartDate, days } = req.body;
+  body("age")
+    .optional()
+    .isInt({ min: 3, max: 18 })
+    .withMessage("Age must be between 3 and 18"),
 
-  const errors = [];
+  body("grade")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Grade cannot be empty"),
 
-  if (!weekStartDate) {
-    errors.push("Week start date is required");
-  }
+  body("deliveryLocation")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Delivery location cannot be empty"),
 
-  if (!days || !Array.isArray(days) || days.length === 0) {
-    errors.push("Days array is required and must not be empty");
-  } else {
-    days.forEach((day, index) => {
-      if (!day.day || !day.date) {
-        errors.push(`Day ${index + 1}: day and date are required`);
-      }
+  body("foodPreference")
+    .optional()
+    .isIn(["veg", "non-veg", "veg-only"])
+    .withMessage("Invalid food preference"),
 
-      if (!day.mealType || !["lunch", "snacks"].includes(day.mealType)) {
-        errors.push(`Day ${index + 1}: meal type must be 'lunch' or 'snacks'`);
-      }
+  validate,
+];
 
-      if (!day.items || !Array.isArray(day.items) || day.items.length === 0) {
-        errors.push(`Day ${index + 1}: items array is required`);
-      }
-    });
-  }
+// Subscription Validators
+const createSubscriptionValidator = [
+  body("childId")
+    .notEmpty()
+    .withMessage("Child ID is required")
+    .isMongoId()
+    .withMessage("Invalid child ID"),
 
-  if (errors.length > 0) {
-    return res.status(400).json({
-      success: false,
-      message: "Validation failed",
-      errors,
-    });
-  }
+  body("planType")
+    .notEmpty()
+    .withMessage("Plan type is required")
+    .isIn(["weekly", "monthly"])
+    .withMessage("Plan type must be weekly or monthly"),
 
-  next();
-};
+  body("mealType")
+    .notEmpty()
+    .withMessage("Meal type is required")
+    .isIn(["lunch", "snacks", "both"])
+    .withMessage("Meal type must be lunch, snacks, or both"),
 
-// Validate MongoDB ObjectId
-exports.validateObjectId = (paramName) => {
-  return (req, res, next) => {
-    const id = req.params[paramName];
+  body("paymentMethod")
+    .notEmpty()
+    .withMessage("Payment method is required")
+    .isIn(["card", "upi", "netbanking", "wallet", "cash"])
+    .withMessage("Invalid payment method"),
 
-    if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.status(400).json({
-        success: false,
-        message: `Invalid ${paramName} format`,
-      });
-    }
+  validate,
+];
 
-    next();
-  };
-};
+const calculatePriceValidator = [
+  body("planType")
+    .notEmpty()
+    .withMessage("Plan type is required")
+    .isIn(["weekly", "monthly"])
+    .withMessage("Plan type must be weekly or monthly"),
 
-// Validate pagination params
-exports.validatePagination = (req, res, next) => {
-  const { page, limit } = req.query;
+  body("mealType")
+    .notEmpty()
+    .withMessage("Meal type is required")
+    .isIn(["lunch", "snacks", "both"])
+    .withMessage("Meal type must be lunch, snacks, or both"),
 
-  if (page && (isNaN(page) || parseInt(page) < 1)) {
-    return res.status(400).json({
-      success: false,
-      message: "Page must be a positive number",
-    });
-  }
+  validate,
+];
 
-  if (limit && (isNaN(limit) || parseInt(limit) < 1 || parseInt(limit) > 100)) {
-    return res.status(400).json({
-      success: false,
-      message: "Limit must be between 1 and 100",
-    });
-  }
+// Menu Validators
+const createMenuValidator = [
+  body("weekStartDate")
+    .notEmpty()
+    .withMessage("Week start date is required")
+    .isISO8601()
+    .withMessage("Invalid date format"),
 
-  next();
+  body("days")
+    .notEmpty()
+    .withMessage("Menu days are required")
+    .isObject()
+    .withMessage("Days must be an object"),
+
+  validate,
+];
+
+// Delivery Validators
+const markDeliveredValidator = [
+  body("comment")
+    .optional()
+    .trim()
+    .isLength({ max: 500 })
+    .withMessage("Comment cannot exceed 500 characters"),
+
+  body("qrScanned")
+    .optional()
+    .isBoolean()
+    .withMessage("qrScanned must be a boolean"),
+
+  validate,
+];
+
+const markMissedValidator = [
+  body("reason")
+    .notEmpty()
+    .withMessage("Reason is required")
+    .trim()
+    .isLength({ max: 500 })
+    .withMessage("Reason cannot exceed 500 characters"),
+
+  validate,
+];
+
+const verifyAndDeliverValidator = [
+  body("qrCodeData").notEmpty().withMessage("QR code data is required"),
+
+  body("mealType")
+    .notEmpty()
+    .withMessage("Meal type is required")
+    .isIn(["lunch", "snacks"])
+    .withMessage("Meal type must be lunch or snacks"),
+
+  body("comment")
+    .optional()
+    .trim()
+    .isLength({ max: 500 })
+    .withMessage("Comment cannot exceed 500 characters"),
+
+  validate,
+];
+
+// Payment Validators
+const processPaymentValidator = [
+  body("subscriptionId")
+    .notEmpty()
+    .withMessage("Subscription ID is required")
+    .isMongoId()
+    .withMessage("Invalid subscription ID"),
+
+  body("paymentMethod")
+    .notEmpty()
+    .withMessage("Payment method is required")
+    .isIn(["card", "upi", "netbanking", "wallet", "cash"])
+    .withMessage("Invalid payment method"),
+
+  validate,
+];
+
+// MongoDB ID Validator
+const mongoIdValidator = (paramName = "id") => [
+  param(paramName).isMongoId().withMessage(`Invalid ${paramName}`),
+
+  validate,
+];
+
+// Query Validators
+const paginationValidator = [
+  query("page")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Page must be a positive integer"),
+
+  query("limit")
+    .optional()
+    .isInt({ min: 1, max: 100 })
+    .withMessage("Limit must be between 1 and 100"),
+
+  validate,
+];
+
+const dateRangeValidator = [
+  query("startDate")
+    .optional()
+    .isISO8601()
+    .withMessage("Invalid start date format"),
+
+  query("endDate")
+    .optional()
+    .isISO8601()
+    .withMessage("Invalid end date format"),
+
+  validate,
+];
+
+module.exports = {
+  validate,
+
+  // Auth
+  registerValidator,
+  loginValidator,
+  changePasswordValidator,
+
+  // Child
+  addChildValidator,
+  updateChildValidator,
+
+  // Subscription
+  createSubscriptionValidator,
+  calculatePriceValidator,
+
+  // Menu
+  createMenuValidator,
+
+  // Delivery
+  markDeliveredValidator,
+  markMissedValidator,
+  verifyAndDeliverValidator,
+
+  // Payment
+  processPaymentValidator,
+
+  // Common
+  mongoIdValidator,
+  paginationValidator,
+  dateRangeValidator,
 };
