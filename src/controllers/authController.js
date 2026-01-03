@@ -3,6 +3,7 @@ const { User } = require("../models");
 
 // Generate JWT Token
 const generateToken = (userId) => {
+  // console.log("jwt_secret,,", process.env.JWT_SECRET);
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE || "7d",
   });
@@ -13,36 +14,45 @@ const generateToken = (userId) => {
 // @access  Public
 exports.register = async (req, res) => {
   try {
-    const { name, email, mobile, password } = req.body;
+    const { name, email, phone, password } = req.body;
+    // console.log("fields,,", name, email, phone, password);
+
+    // return res.json({
+    //   name,
+    //   email,
+    //   phone,
+    //   password,
+    // });
 
     // Check if user already exists
     const existingUser = await User.findOne({
-      $or: [{ email }, { mobile }],
+      $or: [{ email }, { phone }],
     });
 
     if (existingUser) {
+      // console.log("Inside existing user");
       return res.status(400).json({
         success: false,
-        message:
-          existingUser.email === email
-            ? "Email already registered"
-            : "Mobile number already registered",
+        message: "User with email or phone already registered",
       });
     }
 
+    // console.log("before create");
     // Create user
     const user = await User.create({
       name,
       email,
-      mobile,
+      phone,
       password,
       role: "parent",
     });
 
     // Generate token
+    // console.log("before token");
     const token = generateToken(user._id);
+    // console.log("after token");
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Registration successful",
       data: {
@@ -50,7 +60,7 @@ exports.register = async (req, res) => {
           id: user._id,
           name: user.name,
           email: user.email,
-          mobile: user.mobile,
+          phone: user.phone,
           role: user.role,
         },
         token,
@@ -58,7 +68,7 @@ exports.register = async (req, res) => {
     });
   } catch (error) {
     console.error("Register error:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: error.message || "Registration failed",
     });
@@ -123,7 +133,7 @@ exports.login = async (req, res) => {
           id: user._id,
           name: user.name,
           email: user.email,
-          mobile: user.mobile,
+          phone: user.phone,
           role: user.role,
         },
         token,
@@ -152,7 +162,7 @@ exports.getMe = async (req, res) => {
           id: user._id,
           name: user.name,
           email: user.email,
-          mobile: user.mobile,
+          phone: user.phone,
           role: user.role,
           isActive: user.isActive,
           lastLogin: user.lastLogin,
@@ -173,7 +183,7 @@ exports.getMe = async (req, res) => {
 // @access  Private
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, mobile } = req.body;
+    const { name, phone } = req.body;
 
     const user = await User.findById(req.user.id);
 
@@ -184,16 +194,16 @@ exports.updateProfile = async (req, res) => {
       });
     }
 
-    // Check if mobile is being changed and if it's already taken
-    if (mobile && mobile !== user.mobile) {
-      const existingUser = await User.findOne({ mobile });
+    // Check if phone is being changed and if it's already taken
+    if (phone && phone !== user.phone) {
+      const existingUser = await User.findOne({ phone });
       if (existingUser) {
         return res.status(400).json({
           success: false,
-          message: "Mobile number already in use",
+          message: "phone number already in use",
         });
       }
-      user.mobile = mobile;
+      user.phone = phone;
     }
 
     if (name) user.name = name;
@@ -208,7 +218,7 @@ exports.updateProfile = async (req, res) => {
           id: user._id,
           name: user.name,
           email: user.email,
-          mobile: user.mobile,
+          phone: user.phone,
           role: user.role,
         },
       },
@@ -236,10 +246,10 @@ exports.changePassword = async (req, res) => {
       });
     }
 
-    if (newPassword.length < 6) {
+    if (newPassword.length < 4) {
       return res.status(400).json({
         success: false,
-        message: "New password must be at least 6 characters",
+        message: "New password must be at least 4 characters",
       });
     }
 

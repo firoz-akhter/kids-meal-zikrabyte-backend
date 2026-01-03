@@ -12,7 +12,7 @@ exports.getTodaysMeals = async (req, res) => {
     tomorrow.setDate(tomorrow.getDate() + 1);
 
     // Get all children of parent
-    const children = await Child.find({
+    const children = await Child_profile.find({
       parent: req.user.id,
       isActive: true,
     });
@@ -54,7 +54,7 @@ exports.getChildDeliveries = async (req, res) => {
     const { page = 1, limit = 10, status } = req.query;
 
     // Verify child belongs to parent
-    const child = await Child.findOne({
+    const child = await Child_profile.findOne({
       _id: req.params.childId,
       parent: req.user.id,
     });
@@ -62,7 +62,7 @@ exports.getChildDeliveries = async (req, res) => {
     if (!child) {
       return res.status(404).json({
         success: false,
-        message: "Child not found",
+        message: "Child_profile not found",
       });
     }
 
@@ -111,7 +111,7 @@ exports.getChildDeliveries = async (req, res) => {
 exports.getUpcomingMeals = async (req, res) => {
   try {
     // Verify child belongs to parent
-    const child = await Child.findOne({
+    const child = await Child_profile.findOne({
       _id: req.params.childId,
       parent: req.user.id,
     });
@@ -119,7 +119,7 @@ exports.getUpcomingMeals = async (req, res) => {
     if (!child) {
       return res.status(404).json({
         success: false,
-        message: "Child not found",
+        message: "Child_profile not found",
       });
     }
 
@@ -379,7 +379,7 @@ exports.verifyAndDeliver = async (req, res) => {
     }
 
     // Find child by QR code
-    const child = await Child.findOne({ qrCodeData });
+    const child = await Child_profile.findOne({ qrCodeData });
 
     if (!child) {
       return res.status(404).json({

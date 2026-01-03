@@ -10,8 +10,8 @@ const subscriptionSchema = new mongoose.Schema(
     },
     child: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Child",
-      required: [true, "Child reference is required"],
+      ref: "Child_profile",
+      required: [true, "Child_profile reference is required"],
       index: true,
     },
     planType: {

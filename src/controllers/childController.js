@@ -1,11 +1,11 @@
-const { Child, Subscription } = require("../models");
+const { Child_profile, Subscription } = require("../models");
 
 // @desc    Get all children for logged in parent
 // GET /api/children
 // @access  Private (Parent)
 exports.getChildren = async (req, res) => {
   try {
-    const children = await Child.find({
+    const children = await Child_profile.find({
       parent: req.user.id,
       isActive: true,
     }).sort({ createdAt: -1 });
@@ -29,7 +29,7 @@ exports.getChildren = async (req, res) => {
 // @access  Private (Parent)
 exports.getChild = async (req, res) => {
   try {
-    const child = await Child.findOne({
+    const child = await Child_profile.findOne({
       _id: req.params.id,
       parent: req.user.id,
     });
@@ -37,7 +37,7 @@ exports.getChild = async (req, res) => {
     if (!child) {
       return res.status(404).json({
         success: false,
-        message: "Child not found",
+        message: "Child_profile not found",
       });
     }
 
@@ -69,10 +69,12 @@ exports.getChild = async (req, res) => {
 // POST /api/children
 // @access  Private (Parent)
 exports.addChild = async (req, res) => {
+  // console.log("inside add child");
   try {
     const { name, age, grade, allergies, foodPreference, deliveryLocation } =
       req.body;
 
+    // console.log("inside add child");
     // Validate required fields
     if (!name || !age || !grade || !deliveryLocation) {
       return res.status(400).json({
@@ -83,7 +85,8 @@ exports.addChild = async (req, res) => {
     }
 
     // Create child (QR code will be auto-generated in pre-save hook)
-    const child = await Child.create({
+    // console.log("addChild before");
+    const child = await Child_profile.create({
       parent: req.user.id,
       name,
       age,
@@ -92,10 +95,11 @@ exports.addChild = async (req, res) => {
       foodPreference: foodPreference || "veg",
       deliveryLocation,
     });
+    // console.log("addChild after");
 
     res.status(201).json({
       success: true,
-      message: "Child profile created successfully",
+      message: "Child_profile profile created successfully",
       data: { child },
     });
   } catch (error) {
@@ -125,7 +129,7 @@ exports.updateChild = async (req, res) => {
     const { name, age, grade, allergies, foodPreference, deliveryLocation } =
       req.body;
 
-    const child = await Child.findOne({
+    const child = await Child_profile.findOne({
       _id: req.params.id,
       parent: req.user.id,
     });
@@ -133,7 +137,7 @@ exports.updateChild = async (req, res) => {
     if (!child) {
       return res.status(404).json({
         success: false,
-        message: "Child not found",
+        message: "Child_profile not found",
       });
     }
 
@@ -149,7 +153,7 @@ exports.updateChild = async (req, res) => {
 
     res.json({
       success: true,
-      message: "Child profile updated successfully",
+      message: "Child_profile profile updated successfully",
       data: { child },
     });
   } catch (error) {
@@ -175,7 +179,7 @@ exports.updateChild = async (req, res) => {
 // @access  Private (Parent)
 exports.deleteChild = async (req, res) => {
   try {
-    const child = await Child.findOne({
+    const child = await Child_profile.findOne({
       _id: req.params.id,
       parent: req.user.id,
     });
@@ -183,7 +187,7 @@ exports.deleteChild = async (req, res) => {
     if (!child) {
       return res.status(404).json({
         success: false,
-        message: "Child not found",
+        message: "Child_profile not found",
       });
     }
 
@@ -207,7 +211,7 @@ exports.deleteChild = async (req, res) => {
 
     res.json({
       success: true,
-      message: "Child profile deleted successfully",
+      message: "Child_profile profile deleted successfully",
     });
   } catch (error) {
     console.error("Delete child error:", error);
@@ -223,7 +227,7 @@ exports.deleteChild = async (req, res) => {
 // @access  Private (Parent)
 exports.getQRCode = async (req, res) => {
   try {
-    const child = await Child.findOne({
+    const child = await Child_profile.findOne({
       _id: req.params.id,
       parent: req.user.id,
     });
@@ -231,7 +235,7 @@ exports.getQRCode = async (req, res) => {
     if (!child) {
       return res.status(404).json({
         success: false,
-        message: "Child not found",
+        message: "Child_profile not found",
       });
     }
 
@@ -239,7 +243,7 @@ exports.getQRCode = async (req, res) => {
       success: true,
       data: {
         qrCode: child.qrCode,
-        qrCodeData: child.qrCodeData,
+        // qrCodeData: child.qrCodeData,
         childName: child.name,
       },
     });
@@ -255,6 +259,61 @@ exports.getQRCode = async (req, res) => {
 // @desc    Verify QR code (for admin during delivery)
 // POST /api/children/verify-qr
 // @access  Private (Admin)
+// exports.verifyQRCode = async (req, res) => {
+//   try {
+//     const { qrCodeData } = req.body;
+
+//     if (!qrCodeData) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "QR code data is required",
+//       });
+//     }
+
+//     const child = await Child_profile.findOne({ qrCodeData }).populate(
+//       "parent",
+//       "name email mobile"
+//     );
+
+//     if (!child) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Invalid QR code",
+//       });
+//     }
+
+//     // Get active subscription
+//     const activeSubscription = await Subscription.findOne({
+//       child: child._id,
+//       status: "active",
+//     });
+
+//     res.json({
+//       success: true,
+//       data: {
+//         child: {
+//           id: child._id,
+//           name: child.name,
+//           age: child.age,
+//           grade: child.grade,
+//           deliveryLocation: child.deliveryLocation,
+//           foodPreference: child.foodPreference,
+//           allergies: child.allergies,
+//         },
+//         parent: child.parent,
+//         hasActiveSubscription: !!activeSubscription,
+//         subscription: activeSubscription,
+//       },
+//     });
+//   } catch (error) {
+//     console.error("Verify QR code error:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: error.message || "Failed to verify QR code",
+//     });
+//   }
+// };
+
 exports.verifyQRCode = async (req, res) => {
   try {
     const { qrCodeData } = req.body;
@@ -266,15 +325,23 @@ exports.verifyQRCode = async (req, res) => {
       });
     }
 
-    const child = await Child.findOne({ qrCodeData }).populate(
-      "parent",
-      "name email mobile"
-    );
+    // Find child by qrCode.code instead of qrCodeData
+    const child = await Child_profile.findOne({
+      "qrCode.code": qrCodeData,
+    }).populate("parent", "name email mobile");
 
     if (!child) {
       return res.status(404).json({
         success: false,
         message: "Invalid QR code",
+      });
+    }
+
+    // Check if child is active
+    if (!child.isActive) {
+      return res.status(400).json({
+        success: false,
+        message: "Child profile is inactive",
       });
     }
 
@@ -295,6 +362,7 @@ exports.verifyQRCode = async (req, res) => {
           deliveryLocation: child.deliveryLocation,
           foodPreference: child.foodPreference,
           allergies: child.allergies,
+          qrCode: child.qrCode, // Include full qrCode object
         },
         parent: child.parent,
         hasActiveSubscription: !!activeSubscription,
@@ -332,13 +400,13 @@ exports.getAllChildren = async (req, res) => {
 
     const skip = (page - 1) * limit;
 
-    const children = await Child.find(query)
+    const children = await Child_profile.find(query)
       .populate("parent", "name email mobile")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(parseInt(limit));
 
-    const total = await Child.countDocuments(query);
+    const total = await Child_profile.countDocuments(query);
 
     res.json({
       success: true,

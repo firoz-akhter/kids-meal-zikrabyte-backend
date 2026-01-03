@@ -20,7 +20,13 @@ router.get("/", auth, isParent, childController.getChildren);
 // @route   POST /api/children
 // Add a new child
 // @access  Private (Parent)
-router.post("/", auth, isParent, addChildValidator, childController.addChild);
+router.post(
+  "/addChild",
+  auth,
+  isParent,
+  addChildValidator,
+  childController.addChild
+);
 
 // @route   GET /api/children/:id
 // Get single child by ID
@@ -49,7 +55,7 @@ router.put(
 // Delete child (soft delete)
 // @access  Private (Parent)
 router.delete(
-  "/:id",
+  "/delete/:id",
   auth,
   isParent,
   mongoIdValidator("id"),
@@ -60,7 +66,7 @@ router.delete(
 // Get child's QR code
 // @access  Private (Parent)
 router.get(
-  "/:id/qr-code",
+  "/qrCode/:id",
   auth,
   isParent,
   mongoIdValidator("id"),

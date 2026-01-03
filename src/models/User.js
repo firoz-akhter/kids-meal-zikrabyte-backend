@@ -16,12 +16,12 @@ const userSchema = new mongoose.Schema(
       trim: true,
       match: [/^\S+@\S+\.\S+$/, "Please provide a valid email"],
     },
-    mobile: {
+    phone: {
       type: String,
-      // required: [true, "Mobile number is required"],
+      // required: [true, "phone number is required"],
       unique: true,
       trim: true,
-      // match: [/^[0-9]{10}$/, "Please provide a valid 10-digit mobile number"],
+      match: [/^[0-9]{10}$/, "Please provide a valid 10-digit phone number"],
     },
     password: {
       type: String,
@@ -46,19 +46,21 @@ const userSchema = new mongoose.Schema(
 
 // Index for faster queries
 userSchema.index({ email: 1 });
-userSchema.index({ mobile: 1 });
+userSchema.index({ phone: 1 });
 userSchema.index({ role: 1 });
 
 // Hash password before saving
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
+  if (!this.isModified("password")) return;
+  // next();
 
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
-    next();
+    // next();
   } catch (error) {
-    next(error);
+    // next(error);
+    console.log("something went wrong while pre save");
   }
 });
 
