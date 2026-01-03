@@ -16,7 +16,7 @@ const paymentSchema = new mongoose.Schema(
     },
     child: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Child",
+      ref: "Child_profile",
       required: true,
     },
     amount: {

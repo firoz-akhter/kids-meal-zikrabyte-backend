@@ -65,6 +65,13 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "welcome to backend..",
+  });
+});
+
 // Setup all API routes
 setupRoutes(app);
 

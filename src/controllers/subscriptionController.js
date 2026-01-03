@@ -173,7 +173,7 @@ exports.createSubscription = async (req, res) => {
     }
 
     // Verify child belongs to parent
-    const child = await Child.findOne({
+    const child = await Child_profile.findOne({
       _id: childId,
       parent: req.user.id,
       isActive: true,
@@ -182,7 +182,7 @@ exports.createSubscription = async (req, res) => {
     if (!child) {
       return res.status(404).json({
         success: false,
-        message: "Child not found",
+        message: "Child_profile not found",
       });
     }
 
@@ -195,7 +195,7 @@ exports.createSubscription = async (req, res) => {
     if (existingSubscription) {
       return res.status(400).json({
         success: false,
-        message: "Child already has an active subscription",
+        message: "Child_profile already has an active subscription",
       });
     }
 
@@ -409,7 +409,7 @@ exports.cancelSubscription = async (req, res) => {
 exports.getChildSubscriptionHistory = async (req, res) => {
   try {
     // Verify child belongs to parent
-    const child = await Child.findOne({
+    const child = await Child_profile.findOne({
       _id: req.params.childId,
       parent: req.user.id,
     });
@@ -417,7 +417,7 @@ exports.getChildSubscriptionHistory = async (req, res) => {
     if (!child) {
       return res.status(404).json({
         success: false,
-        message: "Child not found",
+        message: "Child_profile not found",
       });
     }
 

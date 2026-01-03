@@ -17,8 +17,10 @@ exports.getAdminDashboard = async (req, res) => {
       isActive: true,
     });
 
-    // Total Children
-    const totalChildren = await Child.countDocuments({ isActive: true });
+    // Total Child_profile
+    const totalChildren = await Child_profile.countDocuments({
+      isActive: true,
+    });
 
     // Active Subscriptions
     const activeSubscriptions = await Subscription.countDocuments({
@@ -222,7 +224,7 @@ exports.getParentDashboard = async (req, res) => {
     tomorrow.setDate(tomorrow.getDate() + 1);
 
     // Get all children
-    const children = await Child.find({
+    const children = await Child_profile.find({
       parent: req.user.id,
       isActive: true,
     });

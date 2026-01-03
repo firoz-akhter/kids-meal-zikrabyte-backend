@@ -13,6 +13,7 @@ const validate = (req, res, next) => {
       })),
     });
   }
+  // console.log("Inside validate");
   next();
 };
 
@@ -33,17 +34,17 @@ const registerValidator = [
     .withMessage("Please provide a valid email")
     .normalizeEmail(),
 
-  body("mobile")
+  body("phone")
     .trim()
     .notEmpty()
-    .withMessage("Mobile number is required")
+    .withMessage("phone number is required")
     .matches(/^[0-9]{10}$/)
-    .withMessage("Please provide a valid 10-digit mobile number"),
+    .withMessage("Please provide a valid 10-digit phone number"),
 
   body("password")
     .notEmpty()
     .withMessage("Password is required")
-    .isLength({ min: 6 })
+    .isLength({ min: 4 })
     .withMessage("Password must be at least 6 characters"),
 
   validate,
@@ -70,18 +71,18 @@ const changePasswordValidator = [
   body("newPassword")
     .notEmpty()
     .withMessage("New password is required")
-    .isLength({ min: 6 })
-    .withMessage("New password must be at least 6 characters"),
+    .isLength({ min: 4 })
+    .withMessage("New password must be at least 4 characters"),
 
   validate,
 ];
 
-// Child Validators
+// Child_profile Validators
 const addChildValidator = [
   body("name")
     .trim()
     .notEmpty()
-    .withMessage("Child name is required")
+    .withMessage("Child_profile name is required")
     .isLength({ min: 2, max: 50 })
     .withMessage("Name must be between 2 and 50 characters"),
 
@@ -147,7 +148,7 @@ const updateChildValidator = [
 const createSubscriptionValidator = [
   body("childId")
     .notEmpty()
-    .withMessage("Child ID is required")
+    .withMessage("Child_profile ID is required")
     .isMongoId()
     .withMessage("Invalid child ID"),
 
@@ -311,7 +312,7 @@ module.exports = {
   loginValidator,
   changePasswordValidator,
 
-  // Child
+  // Child_profile
   addChildValidator,
   updateChildValidator,
 

@@ -1,5 +1,6 @@
 // Check if user has required role
 const roleCheck = (...roles) => {
+  // console.log("inside isAdmin");
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({
@@ -16,7 +17,7 @@ const roleCheck = (...roles) => {
         )} role.`,
       });
     }
-
+    // console.log("after roll check,,");
     next();
   };
 };

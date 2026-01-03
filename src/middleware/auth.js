@@ -51,7 +51,7 @@ const auth = async (req, res, next) => {
         email: user.email,
         role: user.role,
       };
-
+      // console.log("inside auth..");
       next();
     } catch (error) {
       if (error.name === "TokenExpiredError") {

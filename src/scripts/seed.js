@@ -1,6 +1,6 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const { User } = require("../src/models");
+const { User } = require("../models");
 
 const seedAdmin = async () => {
   try {
@@ -23,7 +23,7 @@ const seedAdmin = async () => {
     const admin = await User.create({
       name: "Admin User",
       email: process.env.ADMIN_EMAIL || "admin@kidsmeals.com",
-      mobile: process.env.ADMIN_MOBILE || "9999999999",
+      phone: process.env.ADMIN_MOBILE || "9999999999",
       password: process.env.ADMIN_PASSWORD || "Admin@123",
       role: "admin",
     });

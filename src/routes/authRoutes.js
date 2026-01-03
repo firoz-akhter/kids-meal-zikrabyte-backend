@@ -24,7 +24,7 @@ router.get("/me", auth, authController.getMe);
 
 // @route   PUT /api/auth/profile
 // @access  Private
-router.put("/profile", auth, authController.updateProfile);
+router.put("/updateProfile", auth, authController.updateProfile);
 
 // @route   PUT /api/auth/change-password
 // @access  Private
