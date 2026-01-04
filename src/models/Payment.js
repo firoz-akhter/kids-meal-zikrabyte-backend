@@ -103,100 +103,102 @@ paymentSchema.index({ subscription: 1 });
 paymentSchema.index({ status: 1, paymentDate: 1 });
 paymentSchema.index({ createdAt: -1 });
 
-// // Method to mark payment as completed
-// paymentSchema.methods.markCompleted = function (
-//   transactionId,
-//   gatewayResponse
-// ) {
-//   this.status = "completed";
-//   this.paymentDate = new Date();
-//   this.transactionId = transactionId;
+// Method to mark payment as completed
+paymentSchema.methods.markCompleted = function (
+  transactionId,
+  gatewayResponse
+) {
+  this.status = "completed";
+  this.paymentDate = new Date();
+  this.transactionId = transactionId;
 
-//   this.attempts.push({
-//     status: "completed",
-//     gatewayResponse: gatewayResponse,
-//   });
+  this.attempts.push({
+    status: "completed",
+    gatewayResponse: gatewayResponse,
+  });
 
-//   return this.save();
-// };
+  return this.save();
+};
 
-// // Method to mark payment as failed
-// paymentSchema.methods.markFailed = function (errorMessage, gatewayResponse) {
-//   this.status = "failed";
+// Method to mark payment as failed
+paymentSchema.methods.markFailed = function (errorMessage, gatewayResponse) {
+  this.status = "failed";
 
-//   this.attempts.push({
-//     status: "failed",
-//     errorMessage: errorMessage,
-//     gatewayResponse: gatewayResponse,
-//   });
+  this.attempts.push({
+    status: "failed",
+    errorMessage: errorMessage,
+    gatewayResponse: gatewayResponse,
+  });
 
-//   return this.save();
-// };
+  return this.save();
+};
 
-// // Method to process refund
-// paymentSchema.methods.processRefund = function (amount, reason) {
-//   if (this.status !== "completed") {
-//     throw new Error("Can only refund completed payments");
-//   }
+// Method to process refund
+paymentSchema.methods.processRefund = function (amount, reason) {
+  if (this.status !== "completed") {
+    throw new Error("Can only refund completed payments");
+  }
 
-//   if (amount > this.amount - this.refundAmount) {
-//     throw new Error("Refund amount exceeds available balance");
-//   }
+  if (amount > this.amount - this.refundAmount) {
+    throw new Error("Refund amount exceeds available balance");
+  }
 
-//   this.refundAmount += amount;
-//   this.refundReason = reason;
-//   this.refundedAt = new Date();
+  this.refundAmount += amount;
+  this.refundReason = reason;
+  this.refundedAt = new Date();
 
-//   if (this.refundAmount >= this.amount) {
-//     this.status = "refunded";
-//   }
+  if (this.refundAmount >= this.amount) {
+    this.status = "refunded";
+  }
 
-//   return this.save();
-// };
+  return this.save();
+};
 
-// // Static method to get payment summary for parent
-// paymentSchema.statics.getParentPaymentSummary = async function (parentId) {
-//   const summary = await this.aggregate([
-//     {
-//       $match: {
-//         parent: mongoose.Types.ObjectId(parentId),
-//       },
-//     },
-//     {
-//       $group: {
-//         _id: "$status",
-//         count: { $sum: 1 },
-//         totalAmount: { $sum: "$amount" },
-//       },
-//     },
-//   ]);
+// Static method to get payment summary for parent
+paymentSchema.statics.getParentPaymentSummary = async function (parentId) {
+  console.log("getPaymentSummary before");
+  const summary = await this.aggregate([
+    {
+      $match: {
+        parent: new mongoose.Types.ObjectId(parentId),
+      },
+    },
+    {
+      $group: {
+        _id: "$status",
+        count: { $sum: 1 },
+        totalAmount: { $sum: "$amount" },
+      },
+    },
+  ]);
 
-//   return summary;
-// };
+  console.log("getPaymentSummary after");
+  return summary;
+};
 
-// // Static method to get payment history with pagination
-// paymentSchema.statics.getPaymentHistory = async function (
-//   parentId,
-//   page = 1,
-//   limit = 10
-// ) {
-//   const skip = (page - 1) * limit;
+// Static method to get payment history with pagination
+paymentSchema.statics.getPaymentHistory = async function (
+  parentId,
+  page = 1,
+  limit = 10
+) {
+  const skip = (page - 1) * limit;
 
-//   const payments = await this.find({ parent: parentId })
-//     .sort({ createdAt: -1 })
-//     .skip(skip)
-//     .limit(limit)
-//     .populate("child", "name")
-//     .populate("subscription", "planType mealType startDate endDate");
+  const payments = await this.find({ parent: parentId })
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .populate("child", "name")
+    .populate("subscription", "planType mealType startDate endDate");
 
-//   const total = await this.countDocuments({ parent: parentId });
+  const total = await this.countDocuments({ parent: parentId });
 
-//   return {
-//     payments,
-//     total,
-//     page,
-//     totalPages: Math.ceil(total / limit),
-//   };
-// };
+  return {
+    payments,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
+};
 
 module.exports = mongoose.model("Payment", paymentSchema);

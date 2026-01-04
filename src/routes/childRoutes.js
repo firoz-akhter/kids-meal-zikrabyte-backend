@@ -17,7 +17,7 @@ const {
 // @access  Private (Parent)
 router.get("/", auth, isParent, childController.getChildren);
 
-// @route   POST /api/children
+// @route   POST /api/children/addChild
 // Add a new child
 // @access  Private (Parent)
 router.post(

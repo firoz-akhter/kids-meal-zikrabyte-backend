@@ -185,7 +185,7 @@ exports.getTodaysDeliveries = async (req, res) => {
     }
 
     let deliveries = await Delivery.find(query)
-      .populate("child", "name age grade deliveryLocation qrCodeData")
+      .populate("child", "name age grade deliveryLocation qrCode")
       .populate("subscription", "mealType planType")
       .populate({
         path: "child",
@@ -379,7 +379,10 @@ exports.verifyAndDeliver = async (req, res) => {
     }
 
     // Find child by QR code
-    const child = await Child_profile.findOne({ qrCodeData });
+    // const child = await Child_profile.findOne({ qrCodeData });
+    const child = await Child_profile.findOne({
+      "qrCode.code": qrCodeData,
+    });
 
     if (!child) {
       return res.status(404).json({
