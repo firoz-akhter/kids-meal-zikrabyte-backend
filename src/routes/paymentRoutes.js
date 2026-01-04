@@ -53,13 +53,13 @@ router.post(
 // @route   POST /api/payments/:id/refund-request
 // Request refund (Note: No refund policy)
 // @access  Private (Parent)
-router.post(
-  "/:id/refund-request",
-  auth,
-  isParent,
-  mongoIdValidator("id"),
-  paymentController.requestRefund
-);
+// router.post(
+//   "/:id/refund-request",
+//   auth,
+//   isParent,
+//   mongoIdValidator("id"),
+//   paymentController.requestRefund
+// );
 
 // Admin Routes
 

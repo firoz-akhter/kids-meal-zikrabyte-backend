@@ -1,4 +1,10 @@
-const { User, Child, Subscription, Delivery, Payment } = require("../models");
+const {
+  User,
+  Subscription,
+  Delivery,
+  Payment,
+  Child_profile,
+} = require("../models");
 
 // @desc    Get admin dashboard statistics
 // @route   GET /api/dashboard/admin
@@ -388,7 +394,9 @@ exports.getParentDashboard = async (req, res) => {
 // @access  Private (Admin)
 exports.getDateRangeStats = async (req, res) => {
   try {
-    const { startDate, endDate } = req.query;
+    console.log("inside getDateRangeStats,,");
+    const { startDate, endDate } = req.body;
+    console.log(startDate, endDate);
 
     if (!startDate || !endDate) {
       return res.status(400).json({

@@ -61,6 +61,15 @@ router.put(
   subscriptionController.pauseSubscription
 );
 
+router.put(
+  "/:id/pauseByAdmin",
+  // (req, res) => console.log("reaching,,,")
+  auth,
+  isAdmin,
+  mongoIdValidator("id"),
+  subscriptionController.pauseSubscription
+);
+
 // @route   PUT /api/subscriptions/:id/resume
 // Resume subscription
 // @access  Private (Parent)
@@ -72,6 +81,14 @@ router.put(
   subscriptionController.resumeSubscription
 );
 
+router.put(
+  "/:id/resumeByAdmin",
+  auth,
+  isAdmin,
+  mongoIdValidator("id"),
+  subscriptionController.resumeSubscription
+);
+
 // @route   PUT /api/subscriptions/:id/cancel
 // Cancel subscription
 // @access  Private (Parent)
@@ -79,6 +96,14 @@ router.put(
   "/:id/cancel",
   auth,
   isParent,
+  mongoIdValidator("id"),
+  subscriptionController.cancelSubscription
+);
+
+router.put(
+  "/:id/cancel",
+  auth,
+  isAdmin,
   mongoIdValidator("id"),
   subscriptionController.cancelSubscription
 );

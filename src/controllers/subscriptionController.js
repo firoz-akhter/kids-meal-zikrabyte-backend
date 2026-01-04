@@ -1,4 +1,4 @@
-const { Subscription, Child, Payment, Delivery } = require("../models");
+const { Subscription, Payment, Delivery, Child_profile } = require("../models");
 
 // Pricing configuration
 const PRICING = {
@@ -280,11 +280,13 @@ exports.createSubscription = async (req, res) => {
 // @access  Private (Parent)
 exports.pauseSubscription = async (req, res) => {
   try {
+    // console.log("reasing pause subscrition");
     const { reason } = req.body;
+    // console.log("_d", typeof req.params.id);
 
     const subscription = await Subscription.findOne({
       _id: req.params.id,
-      parent: req.user.id,
+      // parent: req.user.id,
     });
 
     if (!subscription) {
@@ -303,6 +305,7 @@ exports.pauseSubscription = async (req, res) => {
 
     await subscription.pause(reason || "Paused by user");
 
+    // console.log("data,,", subscription);
     res.json({
       success: true,
       message: "Subscription paused successfully",
@@ -324,7 +327,7 @@ exports.resumeSubscription = async (req, res) => {
   try {
     const subscription = await Subscription.findOne({
       _id: req.params.id,
-      parent: req.user.id,
+      // parent: req.user.id,
     });
 
     if (!subscription) {

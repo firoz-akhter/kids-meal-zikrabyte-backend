@@ -38,6 +38,14 @@ router.get(
   menuController.getAllMenus
 );
 
+router.get(
+  "/parent/all",
+  auth,
+  isParent,
+  paginationValidator,
+  menuController.getAllMenus
+);
+
 // @route   GET /api/menus/admin/upcoming-weeks
 // Get upcoming weeks (for creating menus)
 // @access  Private (Admin)
@@ -89,23 +97,23 @@ router.put(
 // @route   PUT /api/menus/:id/unpublish
 // @desc    Unpublish menu
 // @access  Private (Admin)
-// router.put(
-//   "/:id/unpublish",
-//   auth,
-//   isAdmin,
-//   mongoIdValidator("id"),
-//   menuController.unpublishMenu
-// );
+router.put(
+  "/:id/unpublish",
+  auth,
+  isAdmin,
+  mongoIdValidator("id"),
+  menuController.unpublishMenu
+);
 
 // @route   DELETE /api/menus/:id
 // @desc    Delete menu
 // @access  Private (Admin)
-// router.delete(
-//   "/:id",
-//   auth,
-//   isAdmin,
-//   mongoIdValidator("id"),
-//   menuController.deleteMenu
-// );
+router.delete(
+  "/:id",
+  auth,
+  isAdmin,
+  mongoIdValidator("id"),
+  menuController.deleteMenu
+);
 
 module.exports = router;

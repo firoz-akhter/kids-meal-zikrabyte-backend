@@ -117,58 +117,58 @@ menuSchema.index({ year: 1, weekNumber: 1 }, { unique: true });
 menuSchema.index({ weekStartDate: 1, weekEndDate: 1 });
 menuSchema.index({ isPublished: 1, weekStartDate: 1 });
 
-// // Method to publish menu
-// menuSchema.methods.publish = function (adminId) {
-//   this.isPublished = true;
-//   this.publishedAt = new Date();
-//   this.publishedBy = adminId;
-//   return this.save();
-// };
+// Method to publish menu
+menuSchema.methods.publish = function (adminId) {
+  this.isPublished = true;
+  this.publishedAt = new Date();
+  this.publishedBy = adminId;
+  return this.save();
+};
 
-// // Method to unpublish menu
-// menuSchema.methods.unpublish = function () {
-//   this.isPublished = false;
-//   this.publishedAt = null;
-//   return this.save();
-// };
+// Method to unpublish menu
+menuSchema.methods.unpublish = function () {
+  this.isPublished = false;
+  this.publishedAt = null;
+  return this.save();
+};
 
-// // Static method to get menu for a specific date
-// menuSchema.statics.getMenuForDate = async function (date) {
-//   const checkDate = new Date(date);
-//   checkDate.setHours(0, 0, 0, 0);
+// Static method to get menu for a specific date
+menuSchema.statics.getMenuForDate = async function (date) {
+  const checkDate = new Date(date);
+  checkDate.setHours(0, 0, 0, 0);
 
-//   return await this.findOne({
-//     isPublished: true,
-//     weekStartDate: { $lte: checkDate },
-//     weekEndDate: { $gte: checkDate },
-//   });
-// };
+  return await this.findOne({
+    isPublished: true,
+    weekStartDate: { $lte: checkDate },
+    weekEndDate: { $gte: checkDate },
+  });
+};
 
-// // Static method to get current week menu
-// menuSchema.statics.getCurrentWeekMenu = async function () {
-//   const today = new Date();
-//   today.setHours(0, 0, 0, 0);
+// Static method to get current week menu
+menuSchema.statics.getCurrentWeekMenu = async function () {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-//   return await this.findOne({
-//     isPublished: true,
-//     weekStartDate: { $lte: today },
-//     weekEndDate: { $gte: today },
-//   });
-// };
+  return await this.findOne({
+    isPublished: true,
+    weekStartDate: { $lte: today },
+    weekEndDate: { $gte: today },
+  });
+};
 
-// // Helper method to get day name from date
-// menuSchema.methods.getDayMenu = function (date) {
-//   const dayNames = [
-//     "sunday",
-//     "monday",
-//     "tuesday",
-//     "wednesday",
-//     "thursday",
-//     "friday",
-//     "saturday",
-//   ];
-//   const dayName = dayNames[new Date(date).getDay()];
-//   return this.days[dayName];
-// };
+// Helper method to get day name from date
+menuSchema.methods.getDayMenu = function (date) {
+  const dayNames = [
+    "sunday",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+  ];
+  const dayName = dayNames[new Date(date).getDay()];
+  return this.days[dayName];
+};
 
 module.exports = mongoose.model("Menu", menuSchema);
