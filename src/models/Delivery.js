@@ -194,6 +194,8 @@ deliverySchema.statics.createDeliveriesForDate = async function (date) {
     endDate: { $gte: targetDate },
   }).populate("child");
 
+  // console.log("all subscriptions with populated child", subscriptions);
+
   const deliveries = [];
 
   for (const subscription of subscriptions) {
